@@ -65,7 +65,7 @@ router.get('/postDetails/:postID', function(req, res) {
   if(req.user != undefined){var admin = func.checkAdmin(req.user);}
   Post.findById(req.params.postID, function(err, post){
      if(err) console.error('Unable to find Posts: ' + err);
-    res.render('public/postDetails', {admin:admin, user:req.user, post:post});
+    res.render('public/postDetails', {public:true, admin:admin, user:req.user, post:post});
   });
 });
 
@@ -126,7 +126,7 @@ router.get('/user/postDetails/:postID', function(req, res) {
       
      if(err) console.error('Unable to find Posts: ' + err);
       if(req.user != undefined && req.user.username === post.username){
-       res.render('public/postDetails', {admin:admin, user: req.user, post:post}); 
+       res.render('public/postDetails', {public: false, admin:admin, user: req.user, post:post}); 
       }else{
         res.render('error/404', {user:req.user});
       }

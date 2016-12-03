@@ -31,12 +31,12 @@
 
                 <hr>
                 
-                {{#if user}}
+                {{#if public}}
+                <a class="btn btn-primary" href='/'>Back <span class="glyphicon glyphicon-chevron-right"></span></a>
+                {{else}}
                 <a class="btn btn-primary" href='/user/postlist'>Back <span class="glyphicon glyphicon-chevron-right"></span></a>
                 <a class="btn btn-primary" href='/user/deletePost/{{post._id}}'>Delete <span class="glyphicon glyphicon-remove"></span></a>
                 <a class="btn btn-primary" href='/user/editPost/{{post._id}}'>Edit <span class="glyphicon glyphicon-pencil"></span></a>
-                {{else}}
-                <a class="btn btn-primary" href='/'>Back <span class="glyphicon glyphicon-chevron-right"></span></a>
                 {{/if}}
 
             </div>
