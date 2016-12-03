@@ -1,0 +1,36 @@
+<div class="container">
+        <!-- Page Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">My Personal Blog
+                    <small>Posts Overview</small>
+                </h1>
+            </div>
+        </div>
+        <!-- /.row -->
+        {{#if post}}
+        {{#each post as |post|}}
+        <!-- Project One -->
+        <div class="row post">
+            <div class="col-md-6">
+                <h3>{{post.title}}
+                <small>by {{post.username}}, <span class="glyphicon glyphicon-time"></span> {{formatDate post.postDate}}</small>
+                </h3>
+                <p>{{post.content}}</p>
+                <a class="btn btn-primary" href='/user/postDetails/{{post._id}}'>Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+                <a class="btn btn-primary" href='/user/deletePost/{{post._id}}'>Delete <span class="glyphicon glyphicon-remove"></span></a>
+                <a class="btn btn-primary" href='/user/editPost/{{post._id}}'>Edit <span class="glyphicon glyphicon-pencil"></span></a>
+                <hr>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        {{/each}}
+          {{else}}
+	  <p>There are no Posts</p>
+  {{/if}}
+
+        <!-- Footer -->
+
+
+    </div>

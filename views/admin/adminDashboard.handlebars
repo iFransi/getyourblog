@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="page-header"><div class="h3">List Of Destinations</div></div>
+  {{#if account}}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Username</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each account as |account|}}
+          <tr>
+            <td><a href='admin/postlist/{{account._id}}'>{{account.username}}</a></td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+	  <p>There are no Users</p>
+  {{/if}}
+</div>

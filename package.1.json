@@ -1,0 +1,19 @@
+{
+  "name": "project7",
+  "version": "1.0.0",
+  "description": "Project 7, Create a Blog",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Luca Belmonte",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iFransi/tester"
+  }
+}

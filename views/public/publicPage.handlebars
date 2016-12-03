@@ -1,0 +1,49 @@
+<div class="container">
+
+        <!-- Page Heading -->
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="page-header">Posts Overview</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <form class="cmxform" action="/search" method="post"> 
+                    <div class="input-group stylish-input-group">
+                        <input id="search" name="search" type="text" class="form-control"  placeholder="Search Post" >
+                        <span class="input-group-addon">
+                            <a href="/search"><button type="submit">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button></a>  
+                        </span>
+                    </div>
+                </form>
+            </div>
+	    </div>
+        <!-- /.row -->
+        {{#if post}}
+        {{#each post as |post|}}
+        <!-- Project One -->
+        <div class="row post">
+
+            <div class="col-md-6">
+                <h3>{{post.title}}
+                <small>by {{post.username}}, <span class="glyphicon glyphicon-time"></span> {{formatDate post.postDate}}</small>
+                </h3>
+                <p>{{post.content}}</p>
+                <a class="btn btn-primary" href='/postDetails/{{post._id}}'>Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+                <hr>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        
+        {{/each}}
+          {{else}}
+	  <p>There are no Posts</p>
+  {{/if}}
+
+        <!-- Footer -->
+
+
+    </div>

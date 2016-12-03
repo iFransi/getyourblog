@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="page-header"><div class="h3">Post Overview</div></div>
+  {{#if post}}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each post as |post|}}
+          <tr>
+            <td>{{post.title}}</td>
+            <td>{{formatDate post.postDate}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+	  <p>This User has no Posts</p>
+  {{/if}}
+</div>
