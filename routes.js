@@ -64,8 +64,23 @@ router.get('/public', function(req, res) {
 router.get('/postDetails/:postID', function(req, res) {
   if(req.user != undefined){var admin = func.checkAdmin(req.user);}
   Post.findById(req.params.postID, function(err, post){
-     if(err) console.error('Unable to find Posts: ' + err);
-    res.render('public/postDetails', {public:true, admin:admin, user:req.user, post:post});
+    var commentList = post.comment.sort(function(a,b){
+      return new Date(b.date) - new Date(a.date);
+    });
+    if(req.user != undefined){
+      for (var i=0; i<commentList.length;i++){
+        console.log(req.user.username);
+        console.log(commentList[i].username);
+        if (commentList[i].username === req.user.username){
+          commentList[i].owner = true;
+        }else{
+          commentList[i].owner = false;
+        }
+        console.log(commentList);
+      }
+    }
+    if(err) console.error('Unable to find Posts: ' + err);
+    res.render('public/postDetails', {public:true, admin:admin, user:req.user, post:post, comment:commentList});
   });
 });
 
@@ -123,13 +138,28 @@ router.get('/user/postlist', function(req, res) {
 router.get('/user/postDetails/:postID', function(req, res) {
   var admin = func.checkAdmin(req.user);
   Post.findById(req.params.postID, function(err, post){
-      
-     if(err) console.error('Unable to find Posts: ' + err);
-      if(req.user != undefined && req.user.username === post.username){
-       res.render('public/postDetails', {public: false, admin:admin, user: req.user, post:post}); 
+    var commentList = post.comment.sort(function(a,b){
+      return new Date(b.date) - new Date(a.date);
+    });
+    for (var i=0; i<commentList.length;i++){
+      if (commentList[i].username === req.user.username){
+        commentList[i].owner = true;
       }else{
-        res.render('error/404', {user:req.user});
+        commentList[i].owner = false;
       }
+      commentList[i].postID = post._id;
+    }
+    if(err) console.error('Unable to find Posts: ' + err);
+    
+    if(req.user != undefined){
+      if (req.user.username === post.username){
+        res.render('public/postDetails', {public: false, admin:admin, user: req.user, post:post, comment:commentList});
+      }else{
+        res.render('public/postDetails', {public: true, admin:admin, user: req.user, post:post, comment:commentList});
+      }
+    }else{
+      res.render('error/404', {user:req.user});
+    }
   });
 });
 
@@ -146,10 +176,56 @@ router.post('/user/createpost', function(req, res) {
     content: req.body.content,
     image: req.body.image_url,
     userID: req.user._id,
+    comment: []
   });
   post.save(function(err, post){
     if(err) console.error('Unable to add Traveler: ' + err);
     res.redirect(303, 'postList');
+  });
+});
+
+router.post('/user/createcomment', function(req, res){
+  var id = func.guid();
+  console.log(id);
+  var commentObject = {id: func.guid(), userID: req.user._id, username: req.user.username, comment: req.body.comment, date: new Date};
+  console.log(commentObject);
+  Post.findByIdAndUpdate(req.body.postID, {
+    $push:{
+      comment: commentObject
+    }
+  }, {safe:true, upsert:true}, function(err){
+    if(err) console.error('Unable to update Traveler with new Bag: ' + err);
+    res.redirect(303,'/user/postDetails/'+req.body.postID);
+  });
+});
+
+router.get('/user/deletecomment/:commentID/:postID', function(req, res) {
+  console.log(req.params.postID); 
+  console.log(req.params.commentID);
+  Post.findById(req.params.postID, function(err, post) {
+      if(err) console.error('Unable to delete Post: ' + err);
+      var commentArray = post.comment;
+      var commentPosition;
+      var commentOwner;
+      for (var i = 0; i<commentArray.length; i++){
+        if (commentArray[i].id === req.params.commentID){
+          commentPosition = i;
+          commentOwner = commentArray[i].username;
+        }
+      }
+      console.log(commentArray);
+      if (req.user.username === commentOwner){
+      commentArray.splice(commentPosition, 1);
+      console.log(commentArray);
+      }
+      Post.findByIdAndUpdate(req.params.postID, {
+        $set:{
+          comment: commentArray
+        }
+      }, {safe:true, upsert:true}, function(err, traveler){
+        if(err) console.error('Unable to update the Bag in Traveler: ' + err);
+        res.redirect(303,'/user/postDetails/'+req.params.postID);
+      });
   });
 });
 

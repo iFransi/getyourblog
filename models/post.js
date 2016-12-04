@@ -7,7 +7,8 @@ var postSchema = mongoose.Schema({
     content: String,
     image: String,
     userID: String,
-    username: String
+    username: String,
+    comment: []
 });
 
 postSchema.plugin(textSearch);

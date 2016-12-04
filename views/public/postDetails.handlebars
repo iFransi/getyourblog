@@ -41,7 +41,47 @@
 
             </div>
         </div>
+        <hr>
         <!-- /.row -->
-       
+        <!-- Blog Comments -->
+                <!-- Comments Form -->
+                <div class="well">
+                    <h4>Leave a Comment:</h4>
+                    {{#if user}}
+                    <form role="form" action="/user/createcomment" method="post">
+                        <input type="hidden" name="postID" id="postID" value="{{post._id}}">
+                        <div class="form-group">
+                            <textarea name="comment" id="comment" class="form-control" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    {{else}}
+                    <input type="hidden" name="postID" id="postID" value="{{post._id}}">
+                        <div class="form-group">
+                            <textarea name="comment" id="comment" class="form-control" rows="3" readonly>To leave a comment you need to be loged in</textarea>
+                        </div>
+                    </form>
+                    
+                    {{/if}}
+                </div>
 
-    </div>
+                <hr>
+
+                <!-- Posted Comments -->
+                {{#each comment}}
+                <!-- Comment -->
+                <div class="media">
+                    <a class="pull-left" href="#">
+                        <img class="media-object" src="http://placehold.it/64x64" alt="">
+                    </a>
+                    <div class="media-body">
+                        <h4 class="media-heading">{{username}}
+                            <small>{{formatDate date}} {{#if owner}}- <a href="/user/deletecomment/{{id}}/{{postID}}"><span class="glyphicon glyphicon-remove"></span></a>{{/if}}</small>
+                        </h4>
+                        {{comment}}
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            
+            <hr>
