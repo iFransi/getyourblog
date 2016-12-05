@@ -5,11 +5,12 @@ var router = require('express').Router();
 var func = require('./lib/functions.js');
 
 
+
 router.get('/', function(req, res) {
     if(req.user != undefined){
-      res.redirect('/user/postlist');
+      res.redirect('/user/postlist/1');
     }else{
-      res.redirect('/public');
+      res.redirect('/public/1');
     }
 });
 
@@ -36,29 +37,39 @@ router.get('/login', function(req, res) {
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
   if (req.user.role === "user"){
-    res.redirect('/user/postList');
+    res.redirect('/user/postList/1');
   }else{
     res.redirect('/admin');
   }
 });
 
-router.get('/public', function(req, res) {
-    if(req.user != undefined){var admin = func.checkAdmin(req.user);}
-    Post.find({}).sort({postDate: -1}).exec(function(err, post){
-      if(err) console.error('Unable to find Posts: ' + err);
-      var postList = post.map(function(post){
-		   	return{
-		   	  username: post.username,
-		   	  title: post.title,
-		   	  content: post.content.slice(0,140) + "...",
-		   	  _id: post._id,
-		   	  userID: post.userID,
-		   	  postDate: post.postDate,
-		   	  image: post.image
-		    };
-      });
-      res.render('public/publicPage', {admin:admin, user: req.user, post: postList});
-    }); 
+router.get('/public/:page', function(req, res) {
+  var query   = {};
+  var options = {
+    sort:     { postDate: -1 },
+    offset:   ((req.params.page-1)*5), 
+    limit:    5
+  };
+  Post.paginate(query, options).then(function(result) {
+    var pageCount = Math.ceil(result.total / 5);
+    var currentPage = req.params.page; 
+    var pagination = {
+      page: currentPage,
+      pageCount: pageCount
+    };
+    var postList = result.docs.map(function(post){
+		  return{
+		    username: post.username,
+		   	title: post.title,
+		   	content: func.testEnding(post.content),
+		   	_id: post._id,
+		   	userID: post.userID,
+		   	postDate: post.postDate,
+		   	image: post.image
+		  };
+    });
+    res.render('public/publicPage', {user:req.user, post:postList, pagination:pagination});
+  });
 });
 
 router.get('/postDetails/:postID', function(req, res) {
@@ -96,7 +107,7 @@ router.post('/search', function(req, res) {
 		   	  return{
 		   	    username: post.username,
 		   	    title: post.title,
-		   	    content: post.content.slice(0,140) + "...",
+		   	    content: func.testEnding(post.content),
 		   	    _id: post._id,
 		   	    userID: post.userID,
 		   	    postDate: post.postDate,
@@ -107,6 +118,10 @@ router.post('/search', function(req, res) {
       });
 });
 
+router.get('/public/userProfile', function(req, res) {
+    //res.render('public/userProfile', {user:req.user});
+});
+
 router.use(function(req, res, next){
   if (req.user != undefined){
     next();
@@ -115,24 +130,34 @@ router.use(function(req, res, next){
   }
 });
 
-router.get('/user/postlist', function(req, res) {
-    var admin = func.checkAdmin(req.user);
-    Post.find({userID: req.user._id}).sort({postDate: -1}).exec(function(err, post){
-      if(err) console.error('Unable to find Posts: ' + err);
-      var postList = post.map(function(post){
-		   	return{
-		   	  username: post.username,
-		   	  title: post.title,
-		   	  content: post.content.slice(0,140) + "...",
-		   	  _id: post._id,
-		   	  userID: post.userID,
-		   	  postDate: post.postDate,
-		   	  image: post.image
-		    };
-        });
-      
-      res.render('user/listPosts', {admin:admin, user: req.user, post: postList});
+router.get('/user/postlist/:page', function(req, res) {
+  var admin = func.checkAdmin(req.user);
+  var query   = {userID: req.user._id};
+  var options = {
+    sort:     { postDate: -1 },
+    offset:   ((req.params.page-1)*5), 
+    limit:    5
+  };
+  Post.paginate(query, options).then(function(result) {
+    var pageCount = Math.ceil(result.total / 5);
+    var currentPage = req.params.page; 
+    var pagination = {
+      page: currentPage,
+      pageCount: pageCount
+    };
+    var postList = result.docs.map(function(post){
+		  return{
+		    username: post.username,
+		   	title: post.title,
+		   	content: func.testEnding(post.content),
+		   	_id: post._id,
+		   	userID: post.userID,
+		   	postDate: post.postDate,
+		   	image: post.image
+		  };
     });
+    res.render('user/listPosts', {admin:admin, user:req.user, post:postList, pagination:pagination});
+  });
 });
 
 router.get('/user/postDetails/:postID', function(req, res) {
@@ -180,7 +205,7 @@ router.post('/user/createpost', function(req, res) {
   });
   post.save(function(err, post){
     if(err) console.error('Unable to add Traveler: ' + err);
-    res.redirect(303, 'postList');
+    res.redirect(303, '/user/postList/1');
   });
 });
 
@@ -235,7 +260,7 @@ router.get('/user/deletePost/:postID', function(req, res) {
     if(req.user != undefined && req.user.username === post.username){
     post.remove(function(err){
       if(err) console.error('Unable to delete Post: ' + err);
-      res.redirect(303, '/user/postlist');
+      res.redirect(303, '/user/postlist/1');
     });
     }else{
         res.render('error/404', {user:req.user});
@@ -264,9 +289,9 @@ router.post('/user/editPost', function(req, res){
       content: req.body.content,
       image: req.body.image_url
     }
-  }, {safe:true, upsert:true}, function(err, post){
+  }, {safe:true, upsert:true, new:true}, function(err, post){
     if (err) return console.error('Unable to edit Post: ' + err);
-    res.redirect(303, '/user/postList');
+    res.redirect(303, '/user/postList/1');
     
   });
 });

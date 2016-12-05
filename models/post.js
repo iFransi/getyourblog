@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var mongoosePaginate = require('mongoose-paginate');
 var textSearch = require('mongoose-text-search');
 
 var postSchema = mongoose.Schema({
@@ -11,6 +12,7 @@ var postSchema = mongoose.Schema({
     comment: []
 });
 
+postSchema.plugin(mongoosePaginate);
 postSchema.plugin(textSearch);
 postSchema.index({'$**': 'text'});
 

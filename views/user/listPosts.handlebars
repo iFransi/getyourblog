@@ -12,7 +12,7 @@
         {{#each post as |post|}}
         <!-- Project One -->
         <div class="row post">
-            <div class="col-md-6">
+            <div class="col-md-10">
                 <h3>{{post.title}}
                 <small>by {{post.username}}, <span class="glyphicon glyphicon-time"></span> {{formatDate post.postDate}}</small>
                 </h3>
@@ -26,11 +26,27 @@
         <!-- /.row -->
 
         {{/each}}
+    <ul class="pagination">
+    {{#paginate pagination type="first"}}
+      <li {{#if disabled}}class="disabled"{{/if}}><a href="/user/postlist/1">First</a></li>
+    {{/paginate}}
+    {{#paginate pagination type="previous"}}
+      <li {{#if disabled}}class="disabled"{{/if}}><a href="/user/postlist/{{n}}">Prev</a></li>
+    {{/paginate}}
+    {{#paginate pagination type="middle" limit="7"}}
+      <li {{#if active}}class="active"{{/if}}><a href="/user/postlist/{{n}}">{{n}}</a></li>
+    {{/paginate}}
+    {{#paginate pagination type="next"}}
+      <li {{#if disabled}}class="disabled"{{/if}}><a href="/user/postlist/{{n}}">Next</a></li>
+    {{/paginate}}
+    {{#paginate pagination type="last"}}
+      <li {{#if disabled}}class="disabled"{{/if}}><a href="/user/postlist/{{n}}">Last</a></li>
+    {{/paginate}}
+  </ul>
           {{else}}
 	  <p>There are no Posts</p>
   {{/if}}
 
-        <!-- Footer -->
 
 
     </div>

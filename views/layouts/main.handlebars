@@ -20,17 +20,17 @@
         <span class="icon-bar"></span> 
       </button>
       {{#if user}}
-      <a class="navbar-brand" href="/user/postlist">{{user.username}}'s Blog</a>
+      <a class="navbar-brand" href="/user/postlist/1">{{user.username}}'s Blog</a>
       {{else}}
-      <a class="navbar-brand" href="/public">Get Your Own Blog</a>
+      <a class="navbar-brand" href="/public/1">Get Your Own Blog</a>
       {{/if}}
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
         {{#if user}}
         <li><a href="/user/createpost">Create Post</a></li>
-        <li><a href="/user/postlist">My Posts Overview</a></li>
-        <li><a href="/public">Public Page</a></li>
+        <li><a href="/user/postlist/1">My Posts Overview</a></li>
+        <li><a href="/public/1">Public Page</a></li>
         {{/if}}
         {{#if admin}}
         <li><a href="/admin">Admin</a></li>

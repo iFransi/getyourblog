@@ -1,6 +1,7 @@
 <div class="container">
 <div class="page-header"><div class="h3">Edit Your Post</div></div>
 <form class="form-horizontal" action="/user/editPost" method="post">
+  <input type="hidden" name="postID" id="postID" value="{{post._id}}">
   <div class="form-group">
     <label class="col-sm-2 control-label">Title</label>
     <div class="col-sm-8">

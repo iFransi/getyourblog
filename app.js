@@ -8,6 +8,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var credentials = require('./credentials.js');
 var moment = require("moment");
+var paginate = require('handlebars-paginate');
 
 var app = express();
 
@@ -23,7 +24,7 @@ var handlebars = require('express-handlebars')
     helpers:{
       formatDate: function (date) {
         return moment(date).format('MMMM Do YYYY, h:mm:ss a');
-      }}
+      }, "paginate": paginate}
   });
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
